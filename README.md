@@ -1,47 +1,46 @@
 ```
-# 🥛 Centro de Acopio de Leche — Sistema de Liquidación y Reportes
+# Centro de Acopio de Leche — Sistema de Liquidación y Reportes
 
-Sistema de procesamiento de entregas, validación de calidad y liquidación financiera para un centro regional de acopio de leche, desarrollado en **Elixir** para la asignatura **Programación III** (Universidad del Quindío).
+Sistema de procesamiento de entregas, validación de calidad y liquidación financiera para un centro regional de acopio de leche, desarrollado en Elixir para la asignatura Programación III (Universidad del Quindío).
 
 ---
+## Características Principales
 
-## 🚀 Características Principales
-
-* **Validación Secuencial Rigurosa (`with`):** Canalización de entregas verificando en orden estricto: existencia de productor, existencia de tanque, día válido (1 a 6), volumen de litros (1-800 L) y porcentaje de grasa (0-15%).
-* **Cálculos Financieros y Reglas de Negocio:**
+Validación Secuencial Rigurosa (`with`): Canalización de entregas verificando en orden estricto: existencia de productor, existencia de tanque, día válido (1 a 6), volumen de litros (1-800 L) y porcentaje de grasa (0-15%).
+Cálculos Financieros y Reglas de Negocio:**
   * Ajustes por porcentaje de grasa (bonificaciones del 6% y descuentos escalonados hasta del 20%).
   * Bonificación por volumen diario (+\$25.000 para entegas \\(\ge\\) 450 L).
   * Descuento por servicio de transporte (\$18.000 por día con entregas válidas).
-* **Generación de Reportes Administrativos (R1 a R8):**
-  * **R1:** Entregas rechazadas por motivo de rechazo.
-  * **R2:** Almacenamiento por tanque y % de ocupación.
-  * **R3:** Balance diario vs. meta operativa (2.000 L).
-  * **R4:** Tabla de liquidación ordenada por pago neto.
-  * **R5:** Productor destacado por día y acumulado semanal.
-  * **R6:** Calidad promedio ponderada de grasa por productor.
-  * **R7:** Total consolidado pagado y costo promedio por litro.
-  * **R8:** Productores con cobertura completa de tanques.
-* **Interfaz de Consola (CLI):** Captura e integración de entregas adicionales y consulta de comprobantes detallados por productor.
-* **Integración de Fuentes Externas:** Combinación de datos entre centros de acopio utilizando `Map.merge/3`.
+  * Generación de Reportes Administrativos (R1 a R8):
+  * R1: Entregas rechazadas por motivo de rechazo.
+  * R2: Almacenamiento por tanque y % de ocupación.
+  * R3: Balance diario vs. meta operativa (2.000 L).
+  * R4: Tabla de liquidación ordenada por pago neto.
+  * R5: Productor destacado por día y acumulado semanal.
+  * R6: Calidad promedio ponderada de grasa por productor.
+  * R7: Total consolidado pagado y costo promedio por litro.
+  * R8: Productores con cobertura completa de tanques.
+* Interfaz de Consola (CLI): Captura e integración de entregas adicionales y consulta de comprobantes detallados por productor.
+* Integración de Fuentes Externas: Combinación de datos entre centros de acopio utilizando `Map.merge/3`.
 
 ---
 
-## 🛠️ Tecnologías y Restricciones Arquitectónicas
+## Tecnologías y Restricciones Arquitectónicas
 
-* **Lenguaje:** Elixir (Scripts `.exs`)
-* **Paradigma:** Programación Funcional Pura.
-* **Manejo de Errores:** Exclusivamente con tuplas de estado `{:ok, valor}` y `{:error, motivo}`.
-* **Restricciones del Proyecto:**
-  * ❌ Sin uso de `mix`, `defstruct`/structs ni procesos (`spawn`, `Task`).
-  * ❌ Sin lectura/escritura de archivos (`File`) ni librerías externas.
-  * ❌ Sin recursividad ni bloques `try/rescue`.
-  * ✅ Uso de colecciones puras (`List`, `Map`, `Tuple`) y transformaciones con `Enum`.
+* Lenguaje: Elixir (Scripts `.exs`)
+* Paradigma: Programación Funcional Pura.
+* Manejo de Errores: Exclusivamente con tuplas de estado `{:ok, valor}` y `{:error, motivo}`.
+* Restricciones del Proyecto:
+  *  Sin uso de `mix`, `defstruct`/structs ni procesos (`spawn`, `Task`).
+  *  Sin lectura/escritura de archivos (`File`) ni librerías externas.
+  *  Sin recursividad ni bloques `try/rescue`.
+  *  Uso de colecciones puras (`List`, `Map`, `Tuple`) y transformaciones con `Enum`.
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
-```text
+text
 .
 ├── datos.exs         # Base de datos inicial (productores, tanques y entregas)
 ├── validacion.exs    # Módulo de validación de entregas con `with`
@@ -54,7 +53,7 @@ Sistema de procesamiento de entregas, validación de calidad y liquidación fina
 
 ---
 
-## 💻 Instrucciones de Ejecución
+## Instrucciones de Ejecución
 
 Asegúrate de tener instalado **Elixir** en tu sistema.
 
@@ -75,7 +74,7 @@ elixir main.exs
 
 ---
 
-## 👥 Autores
+## Autores
 
 * **Miguel Angel Ceballos Soler:** Datos, Validaciones y Lógica de Negocio.
 * **Victor Manuel Bolaños Guzman:** Reportes Estadísticos y Financieros (R1 a R8).
