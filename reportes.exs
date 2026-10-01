@@ -194,13 +194,16 @@ defmodule Reportes do
     mayores = mayor_por_dia(validas)
 
     mayores
-    |> Util2.convertir_coleccion_mensaje(fn {dia, litros, ganadores} ->
-      "- Día #{dia}: #{Enum.join(ganadores, ", ")} con #{litros} L\n"
+    |> Util2.convertir_coleccion_mensaje(fn
+      {dia, _litros, []} -> "- Día #{dia}: sin entregas válidas\n"
+      {dia, litros, ganadores} -> "- Día #{dia}: #{Enum.join(ganadores, ", ")} con #{litros} L\n"
     end)
     |> Util2.mostrar(:mensaje)
 
-    {codigos, dias} = ganador_semana(mayores)
-    Util2.mostrar("Ganador de la semana: #{Enum.join(codigos, ", ")} (#{dias} días en primer lugar)", :mensaje)
+    case ganador_semana(mayores) do
+      {[], _dias} -> Util2.mostrar("Ganador de la semana: ninguno", :mensaje)
+      {codigos, dias} -> Util2.mostrar("Ganador de la semana: #{Enum.join(codigos, ", ")} (#{dias} días en primer lugar)", :mensaje)
+    end
   end
 
   # -------------------------------------------------------------
@@ -254,11 +257,15 @@ defmodule Reportes do
   # -------------------------------------------------------------
 
   # Retorna {total_pagado, total_litros, costo_por_litro}.
+  # Si no hubo litros, el costo por litro es 0 (para no dividir entre cero).
   def total_pagado(liquidacion) do
     total = liquidacion |> Enum.map(& &1.pago_neto) |> Enum.sum()
     litros = liquidacion |> Enum.map(& &1.litros_totales) |> Enum.sum()
-    {total, litros, total / litros}
+    {total, litros, costo_por_litro(total, litros)}
   end
+
+  defp costo_por_litro(_total, 0), do: 0
+  defp costo_por_litro(total, litros), do: total / litros
 
   def r7(liquidacion) do
     {total, litros, costo_litro} = total_pagado(liquidacion)
@@ -286,10 +293,15 @@ defmodule Reportes do
   def r8(validas, productores, tanques) do
     Util2.mostrar("\n===== R8. Productores que entregaron en los #{length(tanques)} tanques =====", :mensaje)
 
-    validas
-    |> en_todos_los_tanques(productores, tanques)
-    |> Util2.convertir_coleccion_mensaje(fn p -> "- #{p.codigo} #{p.nombre}\n" end)
-    |> Util2.mostrar(:mensaje)
+    case en_todos_los_tanques(validas, productores, tanques) do
+      [] ->
+        Util2.mostrar("Ningún productor entregó en todos los tanques", :mensaje)
+
+      cumplen ->
+        cumplen
+        |> Util2.convertir_coleccion_mensaje(fn p -> "- #{p.codigo} #{p.nombre}\n" end)
+        |> Util2.mostrar(:mensaje)
+    end
   end
 
   # -------------------------------------------------------------
