@@ -1,6 +1,3 @@
-# Integrantes: Miguel Angel Ceballos Soler (Integrante 1), Victor Manuel Bolaños Guzman (Integrante 2),
-#              Juan José Ramírez Londoño (Integrante 3)
-
 defmodule Interaccion do
   @moduledoc """
   Módulo para la gestión de Entrada/Salida (E/S) con el usuario por consola.
@@ -123,9 +120,9 @@ defmodule Interaccion do
           entregas_dia = Map.get(entregas_por_dia, dia)
           litros_dia = Enum.sum_by(entregas_dia, & &1.litros)
           valor_dia = Enum.reduce(entregas_dia, 0.0, fn e, acc -> acc + Calculos.valor_entrega(e) end)
-          bonif_dia = Calculos.bonificacion_dia(litros_dia)
+          bonif_dia = if litros_dia >= 450, do: 25000, else: 0
 
-          IO.puts("  • Día #{dia}: #{litros_dia} L | Valor Entregas: $#{round(valor_dia)} | Bonificación Día: $#{bonif_dia}")
+          IO.puts("  • Día #{dia}: #{litros_dia} L | Valor Entregas: $#{Float.round(valor_dia, 2)} | Bonificación Día: $#{bonif_dia}")
         end)
       end
 
@@ -133,11 +130,11 @@ defmodule Interaccion do
       IO.puts("RESUMEN GENERAL DE LA SEMANA:")
       IO.puts("  Total Entregas Válidas: #{liq.entregas_count}")
       IO.puts("  Total Litros Entregados: #{liq.litros_totales} L")
-      IO.puts("  Valor Bruto Entregas:  $#{round(liq.pago_bruto)}")
+      IO.puts("  Valor Bruto Entregas:  $#{Float.round(liq.pago_bruto, 2)}")
       IO.puts("  (+) Bonif. Volumen:    $#{liq.bonificacion_volumen}")
       IO.puts("  (-) Descuento Transp:  $#{liq.descuento_transporte}")
       IO.puts("--------------------------------------------------")
-      IO.puts("  NETO A PAGAR:          $#{round(liq.pago_neto)}")
+      IO.puts("  NETO A PAGAR:          $#{Float.round(liq.pago_neto, 2)}")
       IO.puts("--------------------------------------------------\n")
     end
   end
