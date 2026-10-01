@@ -1,8 +1,8 @@
 # Carga de todos los módulos del proyecto
+Code.require_file("Util2.ex", __DIR__)
 Code.require_file("datos.exs", __DIR__)
 Code.require_file("validacion.exs", __DIR__)
 Code.require_file("calculos.exs", __DIR__)
-Code.require_file("ranking.exs", __DIR__)
 Code.require_file("reportes.exs", __DIR__)
 Code.require_file("investigacion.exs", __DIR__)
 Code.require_file("interaccion.exs", __DIR__)
@@ -55,7 +55,7 @@ defmodule Main do
     IO.puts("--------------------------------------------------\n")
 
     # 4. Generar Reportes R1 a R8 (Módulo del Integrante 2)
-    Reportes.generar_todos(productores, tanques, validas, rechazadas, liquidaciones)
+    Reportes.generar(validas, rechazadas, productores, tanques, liquidaciones)
 
     # 5. Generar Comprobante Individual por Productor
     Interaccion.mostrar_comprobante(productores, validas, liquidaciones)
@@ -64,7 +64,7 @@ defmodule Main do
     IO.puts("\n==================================================")
     IO.puts("        INVESTIGACIÓN: COMBINACIÓN DE CENTROS     ")
     IO.puts("==================================================")
-    mapa_r3 = Reportes.litros_diarios_mapa(validas)
+    mapa_r3 = Reportes.litros_por_dia(validas)
     centro_vecino = %{1 => 1850.5, 2 => 2100.0, 3 => 1640.0, 5 => 2350.0, 7 => 800.0}
     mapa_combinado = Investigacion.combinar_centros(mapa_r3, centro_vecino)
 
