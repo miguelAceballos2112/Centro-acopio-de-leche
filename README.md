@@ -78,7 +78,7 @@ elixir main.exs
 
 * **Miguel Angel Ceballos Soler:** Datos, Validaciones y Lógica de Negocio.
 * **Victor Manuel Bolaños Guzman:** Reportes Estadísticos y Financieros (R1 a R8).
-* **Juan Pablo Londoño Cardenas:** Interacción CLI, Comprobantes y Documentación.
+* **Juan José Ramírez Londoño:** Interacción CLI, Comprobantes y Documentación.
 
 *Universidad del Quindío — Ingeniería de Sistemas y Computación*
 
