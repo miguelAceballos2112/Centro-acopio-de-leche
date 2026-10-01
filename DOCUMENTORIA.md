@@ -43,7 +43,7 @@ Además, en algunos puntos transformamos listas en mapas porque así el cálculo
 |---|---|---|
 | `with` | `Validacion.validar_entrega/3`, `Interaccion.parsear_entrega_adicional/1` | encadenar verificaciones en orden; la primera que falle devuelve su `{:error, motivo}` |
 | Guardas en cláusulas (`when`) | `verificar_dia/1`, `verificar_litros/1`, `verificar_grasa/1`, `Calculos.factor_grasa/1`, `Calculos.bonificacion_dia/1` | elegir la regla según el valor (rangos de grasa, límites de litros) |
-| `case` | `main.exs` (entrega adicional), `Reportes.r6/1`, `r5/1`, `r8/3`, `parse_integer/1` | decidir según el resultado (`{:ok, _}`, `{:error, _}`, `:omitir`, lista vacía) |
+| `case` | `main.exs` (entrega adicional), `Reportes.r6/1`, `r5/1`, `r8/3`, `convertir_entero/1` | decidir según el resultado (`{:ok, _}`, `{:error, _}`, `:omitir`, lista vacía) |
 | `if` | `verificar_productor/2`, `verificar_tanque/2`, `descuento_transporte_total/2` | condiciones simples de verdadero/falso |
 | `Enum` | todo el programa | recorrer colecciones: `map`, `filter`, `reduce`, `group_by`, `sum`, `any?`, `all?`, `each` |
 | Comprehensions `for` | `Reportes.mayor_por_dia/1`, `Reportes.ganador_semana/1` | quedarse con todos los códigos empatados en el máximo |
@@ -395,12 +395,12 @@ Productor: Diana Beltrán (P09)
 Usa Servicio de Transporte: NO
 --------------------------------------------------
 DETALLE POR DÍA CON ENTREGAS VÁLIDAS:
-  • Día 1: 700 L | Valor Entregas: $1159200 | Bonificación Día: $25000
-  • Día 2: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
-  • Día 3: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
-  • Día 4: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
-  • Día 5: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
-  • Día 6: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
+  - Día 1: 700 L | Valor Entregas: $1159200 | Bonificación Día: $25000
+  - Día 2: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
+  - Día 3: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
+  - Día 4: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
+  - Día 5: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
+  - Día 6: 60 L | Valor Entregas: $114480 | Bonificación Día: $0
 --------------------------------------------------
 RESUMEN GENERAL DE LA SEMANA:
   Total Entregas Válidas: 6
