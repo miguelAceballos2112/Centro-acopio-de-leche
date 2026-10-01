@@ -3,51 +3,50 @@
 
 defmodule Interaccion do
   @moduledoc """
-  Módulo para la gestión de Entrada/Salida (E/S) con el usuario por consola.
-  Maneja la captura de entregas adicionales y la consulta de comprobantes por productor.
+  Entrada y salida por consola: entrega adicional y comprobante del productor.
   """
 
   @doc """
-  Solicita por consola una entrega adicional en formato `productor;tanque;dia;litros;grasa`.
-  Si el usuario presiona Enter sin escribir nada, retorna `:omitir`.
-  Si la entrada es inválida, retorna `{:error, :formato_invalido}`.
+  Pide una entrega adicional con el formato `productor;tanque;dia;litros;grasa`.
+  Si el usuario solo presiona Enter, retorna `:omitir`.
+  Si el formato no es correcto, retorna `{:error, :formato_invalido}`.
   """
   def solicitar_entrega_adicional do
-    IO.puts("\n==================================================")
-    IO.puts("          REGISTRO DE ENTREGA ADICIONAL           ")
-    IO.puts("==================================================")
-    IO.puts("Ingrese una entrega adicional (productor;tanque;dia;litros;grasa)")
-    input = IO.gets("o Enter para omitir: ")
+    Util2.mostrar("\n==================================================", :mensaje)
+    Util2.mostrar("          REGISTRO DE ENTREGA ADICIONAL           ", :mensaje)
+    Util2.mostrar("==================================================", :mensaje)
+    Util2.mostrar("Ingrese una entrega adicional (productor;tanque;dia;litros;grasa)", :mensaje)
+    entrada = IO.gets("o Enter para omitir: ")
 
-    case input do
+    case entrada do
       :eof ->
         :omitir
 
-      cadena ->
-        parsear_entrega_adicional(cadena)
+      texto ->
+        parsear_entrega_adicional(texto)
     end
   end
 
   @doc """
-  Parsea una cadena recibida por consola sin utilizar try/rescue.
-  Usa Integer.parse/1 y Float.parse/1 de forma segura.
+  Convierte el texto en una entrega sin usar try/rescue.
+  Usa Integer.parse/1 para el día y Float.parse/1 para los litros y la grasa.
   """
-  def parsear_entrega_adicional(cadena) when is_binary(cadena) do
-    limpia = String.trim(cadena)
+  def parsear_entrega_adicional(texto) when is_binary(texto) do
+    limpio = String.trim(texto)
 
-    if limpia == "" do
+    if limpio == "" do
       :omitir
     else
-      campos = String.split(limpia, ";")
+      campos = String.split(limpio, ";")
 
       case campos do
-        [prod, tanq, dia_str, lit_str, grasa_str] ->
-          with {:ok, dia} <- parse_integer(dia_str),
-               {:ok, litros} <- parse_number(lit_str),
-               {:ok, grasa} <- parse_number(grasa_str) do
+        [productor, tanque, texto_dia, texto_litros, texto_grasa] ->
+          with {:ok, dia} <- convertir_entero(texto_dia),
+               {:ok, litros} <- convertir_numero(texto_litros),
+               {:ok, grasa} <- convertir_numero(texto_grasa) do
             {:ok, %{
-              productor: String.trim(prod),
-              tanque: String.trim(tanq),
+              productor: String.trim(productor),
+              tanque: String.trim(tanque),
               dia: dia,
               litros: litros,
               grasa: grasa
@@ -62,83 +61,79 @@ defmodule Interaccion do
     end
   end
 
-  defp parse_integer(str) do
-    str = String.trim(str)
-    case Integer.parse(str) do
-      {num, ""} -> {:ok, num}
+  # Integer.parse("4") retorna {4, ""}. Si sobra texto, no es un entero.
+  defp convertir_entero(texto) do
+    case Integer.parse(String.trim(texto)) do
+      {numero, ""} -> {:ok, numero}
       _otro -> {:error, :formato_invalido}
     end
   end
 
-  defp parse_number(str) do
-    str = String.trim(str)
-    case Float.parse(str) do
-      {num, ""} -> {:ok, num}
-      _otro ->
-        case Integer.parse(str) do
-          {num, ""} -> {:ok, num * 1.0}
-          _otro -> {:error, :formato_invalido}
-        end
+  # Float.parse acepta "300" y "320.5". Si sobra texto, no es un número.
+  defp convertir_numero(texto) do
+    case Float.parse(String.trim(texto)) do
+      {numero, ""} -> {:ok, numero}
+      _otro -> {:error, :formato_invalido}
     end
   end
 
   @doc """
-  Solicita el código del productor e imprime el comprobante detallado.
-  Si el productor no existe, lo notifica amablemente sin fallar el programa.
+  Pide el código de un productor y muestra su comprobante.
+  Si el código no existe, muestra un mensaje de error sin detener el programa.
   """
   def mostrar_comprobante(productores, entregas_validas, liquidaciones) do
-    IO.puts("\n==================================================")
-    IO.puts("             COMPROBANTE DE PRODUCTOR             ")
-    IO.puts("==================================================")
-    input = IO.gets("Ingrese el código del productor (ej. P01): ")
+    Util2.mostrar("\n==================================================", :mensaje)
+    Util2.mostrar("             COMPROBANTE DE PRODUCTOR             ", :mensaje)
+    Util2.mostrar("==================================================", :mensaje)
+    entrada = IO.gets("Ingrese el código del productor (ej. P01): ")
 
     codigo =
-      case input do
+      case entrada do
         :eof -> ""
-        str -> String.trim(str)
+        texto -> String.trim(texto)
       end
 
     productor = Enum.find(productores, fn p -> p.codigo == codigo end)
 
     if productor == nil do
-      IO.puts("\n️  [ERROR] El código de productor '#{codigo}' no existe en el sistema.")
+      Util2.mostrar("\n  [ERROR] El código de productor '#{codigo}' no existe en el sistema.", :mensaje)
     else
-      liq = Enum.find(liquidaciones, fn l -> l.codigo == codigo end)
-      entregas_p = Enum.filter(entregas_validas, fn e -> e.productor == codigo end)
+      liquidacion = Enum.find(liquidaciones, fn l -> l.codigo == codigo end)
+      entregas_productor = Enum.filter(entregas_validas, fn e -> e.productor == codigo end)
 
-      IO.puts("\n--------------------------------------------------")
-      IO.puts("COMPROBANTE FINANCIERO - CENTRO DE ACOPIO DE LECHE")
-      IO.puts("--------------------------------------------------")
-      IO.puts("Productor: #{productor.nombre} (#{productor.codigo})")
-      IO.puts("Usa Servicio de Transporte: #{if productor.transporte, do: "SÍ", else: "NO"}")
-      IO.puts("--------------------------------------------------")
-      IO.puts("DETALLE POR DÍA CON ENTREGAS VÁLIDAS:")
+      Util2.mostrar("\n--------------------------------------------------", :mensaje)
+      Util2.mostrar("COMPROBANTE FINANCIERO - CENTRO DE ACOPIO DE LECHE", :mensaje)
+      Util2.mostrar("--------------------------------------------------", :mensaje)
+      Util2.mostrar("Productor: #{productor.nombre} (#{productor.codigo})", :mensaje)
+      Util2.mostrar("Usa Servicio de Transporte: #{if productor.transporte, do: "SÍ", else: "NO"}", :mensaje)
+      Util2.mostrar("--------------------------------------------------", :mensaje)
+      Util2.mostrar("DETALLE POR DÍA CON ENTREGAS VÁLIDAS:", :mensaje)
 
-      entregas_por_dia = Enum.group_by(entregas_p, & &1.dia)
+      entregas_por_dia = Enum.group_by(entregas_productor, & &1.dia)
 
       if Enum.empty?(entregas_por_dia) do
-        IO.puts("  (No registró entregas válidas en la semana)")
+        Util2.mostrar("  (No registró entregas válidas en la semana)", :mensaje)
       else
         Enum.each(Enum.sort(Map.keys(entregas_por_dia)), fn dia ->
           entregas_dia = Map.get(entregas_por_dia, dia)
           litros_dia = Enum.sum_by(entregas_dia, & &1.litros)
-          valor_dia = Enum.reduce(entregas_dia, 0.0, fn e, acc -> acc + Calculos.valor_entrega(e) end)
-          bonif_dia = Calculos.bonificacion_dia(litros_dia)
+          valor_dia = Enum.reduce(entregas_dia, 0.0, fn e, acumulado -> acumulado + Calculos.valor_entrega(e) end)
+          bonificacion_dia = Calculos.bonificacion_dia(litros_dia)
 
-          IO.puts("  • Día #{dia}: #{litros_dia} L | Valor Entregas: $#{round(valor_dia)} | Bonificación Día: $#{bonif_dia}")
+          Util2.mostrar("  - Día #{dia}: #{litros_dia} L | Valor Entregas: $#{round(valor_dia)} | Bonificación Día: $#{bonificacion_dia}", :mensaje)
         end)
       end
 
-      IO.puts("--------------------------------------------------")
-      IO.puts("RESUMEN GENERAL DE LA SEMANA:")
-      IO.puts("  Total Entregas Válidas: #{liq.entregas_count}")
-      IO.puts("  Total Litros Entregados: #{liq.litros_totales} L")
-      IO.puts("  Valor Bruto Entregas:  $#{round(liq.pago_bruto)}")
-      IO.puts("  (+) Bonif. Volumen:    $#{liq.bonificacion_volumen}")
-      IO.puts("  (-) Descuento Transp:  $#{liq.descuento_transporte}")
-      IO.puts("--------------------------------------------------")
-      IO.puts("  NETO A PAGAR:          $#{round(liq.pago_neto)}")
-      IO.puts("--------------------------------------------------\n")
+      Util2.mostrar("--------------------------------------------------", :mensaje)
+      Util2.mostrar("RESUMEN GENERAL DE LA SEMANA:", :mensaje)
+      Util2.mostrar("  Total Entregas Válidas: #{liquidacion.entregas_count}", :mensaje)
+      Util2.mostrar("  Total Litros Entregados: #{liquidacion.litros_totales} L", :mensaje)
+      Util2.mostrar("  Valor Bruto Entregas:  $#{round(liquidacion.pago_bruto)}", :mensaje)
+      Util2.mostrar("  (+) Bonif. Volumen:    $#{liquidacion.bonificacion_volumen}", :mensaje)
+      Util2.mostrar("  (-) Descuento Transp:  $#{liquidacion.descuento_transporte}", :mensaje)
+      Util2.mostrar("--------------------------------------------------", :mensaje)
+      Util2.mostrar("  NETO A PAGAR:          $#{round(liquidacion.pago_neto)}", :mensaje)
+      Util2.mostrar("--------------------------------------------------\n", :mensaje)
     end
   end
 end

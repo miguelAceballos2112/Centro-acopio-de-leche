@@ -22,9 +22,9 @@ defmodule Main do
   @repeticiones 1000
 
   def ejecutar do
-    IO.puts("==================================================")
-    IO.puts("   SISTEMA DE ACOPIO DE LECHE - PROGRAMACIÓN III  ")
-    IO.puts("==================================================\n")
+    Util2.mostrar("==================================================", :mensaje)
+    Util2.mostrar("   SISTEMA DE ACOPIO DE LECHE - PROGRAMACIÓN III  ", :mensaje)
+    Util2.mostrar("==================================================\n", :mensaje)
 
     # 1. Cargar datos iniciales
     productores = Datos.productores()
@@ -49,11 +49,11 @@ defmodule Main do
     tiempo_liquidacion =
       medir_promedio(fn -> Calculos.liquidacion_general(productores, validas) end)
 
-    IO.puts("--------------------------------------------------")
-    IO.puts("  Promedio de #{@repeticiones} repeticiones medidas con :timer.tc/1")
-    IO.puts("  Validación (#{length(entregas_base)} entregas): #{Float.round(tiempo_validacion, 2)} µs")
-    IO.puts("  Liquidación (#{length(productores)} productores): #{Float.round(tiempo_liquidacion, 2)} µs")
-    IO.puts("--------------------------------------------------\n")
+    Util2.mostrar("--------------------------------------------------", :mensaje)
+    Util2.mostrar("  Promedio de #{@repeticiones} repeticiones medidas con :timer.tc/1", :mensaje)
+    Util2.mostrar("  Validación (#{length(entregas_base)} entregas): #{Float.round(tiempo_validacion, 2)} µs", :mensaje)
+    Util2.mostrar("  Liquidación (#{length(productores)} productores): #{Float.round(tiempo_liquidacion, 2)} µs", :mensaje)
+    Util2.mostrar("--------------------------------------------------\n", :mensaje)
 
     # 6. Generar Reportes R1 a R8 (Módulo del Integrante 2)
     Reportes.generar(validas, rechazadas, productores, tanques, liquidaciones)
@@ -62,17 +62,17 @@ defmodule Main do
     Interaccion.mostrar_comprobante(productores, validas, liquidaciones)
 
     # 8. Demostración de Investigación (Map.merge/2 frente a Map.merge/3)
-    IO.puts("\n==================================================")
-    IO.puts("        INVESTIGACIÓN: COMBINACIÓN DE CENTROS     ")
-    IO.puts("==================================================")
+    Util2.mostrar("\n==================================================", :mensaje)
+    Util2.mostrar("        INVESTIGACIÓN: COMBINACIÓN DE CENTROS     ", :mensaje)
+    Util2.mostrar("==================================================", :mensaje)
     mapa_r3 = Reportes.litros_por_dia(validas)
     centro_vecino = %{1 => 1850.5, 2 => 2100, 3 => 1640, 5 => 2350, 7 => 800}
 
-    IO.puts("Mapa R3 (Centro Principal): #{inspect(mapa_r3)}")
-    IO.puts("Mapa Centro Vecino:         #{inspect(centro_vecino)}")
-    IO.puts("Con Map.merge/2:            #{inspect(Investigacion.combinar_sin_sumar(mapa_r3, centro_vecino))}")
-    IO.puts("Con Map.merge/3:            #{inspect(Investigacion.combinar_centros(mapa_r3, centro_vecino))}")
-    IO.puts("==================================================\n")
+    Util2.mostrar("Mapa R3 (Centro Principal): #{inspect(mapa_r3)}", :mensaje)
+    Util2.mostrar("Mapa Centro Vecino:         #{inspect(centro_vecino)}", :mensaje)
+    Util2.mostrar("Con Map.merge/2:            #{inspect(Investigacion.combinar_sin_sumar(mapa_r3, centro_vecino))}", :mensaje)
+    Util2.mostrar("Con Map.merge/3:            #{inspect(Investigacion.combinar_centros(mapa_r3, centro_vecino))}", :mensaje)
+    Util2.mostrar("==================================================\n", :mensaje)
   end
 
   # Ejecuta la función @repeticiones veces y retorna el tiempo promedio en microsegundos.
@@ -89,20 +89,20 @@ defmodule Main do
       {:ok, entrega} ->
         case Validacion.validar_entrega(entrega, productores, tanques) do
           {:ok, entrega_valida} ->
-            IO.puts("  Entrega adicional válida. Se incorpora a todos los reportes.\n")
+            Util2.mostrar("  Entrega adicional válida. Se incorpora a todos los reportes.\n", :mensaje)
             {validas ++ [entrega_valida], rechazadas}
 
           {:error, motivo} ->
-            IO.puts("  Entrega adicional rechazada por #{motivo}. Aparecerá en R1.\n")
+            Util2.mostrar("  Entrega adicional rechazada por #{motivo}. Aparecerá en R1.\n", :mensaje)
             {validas, rechazadas ++ [%{entrega: entrega, motivo: motivo}]}
         end
 
       {:error, :formato_invalido} ->
-        IO.puts("  [ERROR] Formato de entrega inválido. Se omitirá la entrega adicional.\n")
+        Util2.mostrar("  [ERROR] Formato de entrega inválido. Se omitirá la entrega adicional.\n", :mensaje)
         {validas, rechazadas}
 
       :omitir ->
-        IO.puts("  Entrega adicional omitida.\n")
+        Util2.mostrar("  Entrega adicional omitida.\n", :mensaje)
         {validas, rechazadas}
     end
   end
