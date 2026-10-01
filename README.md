@@ -40,15 +40,18 @@ Cálculos Financieros y Reglas de Negocio:**
 
 ## Estructura del Proyecto
 
-text
+```text
 .
+├── Util2.ex          # Utilidades del curso (mostrar, ordenar, convertir colecciones)
 ├── datos.exs         # Base de datos inicial (productores, tanques y entregas)
 ├── validacion.exs    # Módulo de validación de entregas con `with`
 ├── calculos.exs      # Módulo con fórmulas financieras y reglas de negocio
-├── reportes.exs      # Módulo para la generación de reportes R1 a R8
-├── main.exs          # Orquestador principal e interfaz de usuario (CLI)
+├── reportes.exs      # Módulo para la generación de reportes R1 a R8 y ranking/2
+├── interaccion.exs   # Entrega adicional y comprobante por consola
+├── investigacion.exs # Combinación de centros con Map.merge/3
+├── main.exs          # Orquestador principal
+├── DOCUMENTORIA.md   # Contenido del PDF (Partes A, C, D, R6 y salida)
 └── README.md         # Documentación del proyecto
-
 ```
 
 ---
