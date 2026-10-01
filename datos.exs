@@ -1,12 +1,12 @@
 defmodule Datos do
-  @moduledoc
-  # Módulo de datos iniciales para el proyecto del Centro de Acopio de Leche.
-  # Contiene los productores, tanques y el registro completo de entregas (10 inválidas y 80 válidas).
+  @moduledoc """
+   Módulo de datos iniciales para el proyecto del Centro de Acopio de Leche.
+   Contiene los productores, tanques y el registro completo de entregas (10 inválidas y 80 válidas).
+  """
 
-  @doc
-  # Retorna la lista de 10 productores de la región. 4 de ellos utilizan servicio de transporte
-  # (\`transporte: true\`).
-
+  @doc"""
+   Retorna la lista de 10 productores de la región. 4 de ellos utilizan servicio de transporte
+   """
   def productores do
     [
       %{codigo: "P01", nombre: "Marta Gómez", transporte: true},
@@ -22,8 +22,9 @@ defmodule Datos do
     ]
   end
 
-  @doc
-  # Retorna los 4 tanques del centro de acopio con su respectiva capacidad nominal en litros.
+  @doc"""
+   Retorna los 4 tanques del centro de acopio con su respectiva capacidad nominal en litros
+   """
   def tanques do
     [
       %{id: "T1", nombre: "Tanque Norte", capacidad: 5000},
