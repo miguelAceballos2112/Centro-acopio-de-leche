@@ -1,4 +1,12 @@
+# Integrantes: Miguel Angel Ceballos Soler (Integrante 1), Victor Manuel Bolaños Guzman (Integrante 2),
+#              Juan José Ramírez Londoño (Integrante 3)
+
 defmodule Validacion do
+  @dias 1..6
+  @max_litros 800
+  @grasa_minima 0
+  @grasa_maxima 15
+
   def validar_entrega(entrega, productores, tanques) do
     with {:ok, _productor} <- verificar_productor(entrega.productor, productores),
          {:ok, _tanque} <- verificar_tanque(entrega.tanque, tanques),
@@ -43,14 +51,14 @@ defmodule Validacion do
     end
   end
 
-  defp verificar_dia(dia) when is_integer(dia) and dia in 1..6, do: {:ok, dia}
+  defp verificar_dia(dia) when is_integer(dia) and dia in @dias, do: {:ok, dia}
   defp verificar_dia(_), do: {:error, :dia_invalido}
 
   defp verificar_litros(litros) when is_number(litros)
-  and litros > 0 and litros <= 800, do: {:ok, litros}
+  and litros > 0 and litros <= @max_litros, do: {:ok, litros}
   defp verificar_litros(_), do: {:error, :litros_fuera_de_rango}
 
   defp verificar_grasa(grasa) when is_number(grasa)
-  and grasa >= 0 and grasa <= 15, do: {:ok, grasa}
+  and grasa >= @grasa_minima and grasa <= @grasa_maxima, do: {:ok, grasa}
   defp verificar_grasa(_), do: {:error, :porcentaje_invalido}
 end
