@@ -21,7 +21,7 @@ defmodule Investigacion do
   def demo_diferencia_merge(mapa_r3, centro_vecino) do
     %{
       merge_2_sobrescrito: Map.merge(mapa_r3, centro_vecino),
-      merge_3_sumado: Map.merge(mapa_r3, centro_vecino)
+      merge_3_sumado: Map.merge(mapa_r3, centro_vecino, fn _k, v1, v2 -> v1 + v2 end)
     }
   end
 end

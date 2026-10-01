@@ -1,14 +1,14 @@
 defmodule Validacion do
   def validar_entrega(entrega, productores, tanques) do
     with {:ok, _productor} <- verificar_productor(entrega.productor, productores),
-          {:ok, _tanque} <- verificar_tanque(entrega.tanque, tanques),
-          {:ok, _dia} <- verificar_dia(entrega.dia),
-          {:ok, _litros} <- verificar_litros(entrega.litros),
-          {:ok, _grasa} <- verificar_grasa(entrega.grasa) do
-        :ok
-      else
-        {:error, motivo} -> {:error, motivo}
-      end
+         {:ok, _tanque} <- verificar_tanque(entrega.tanque, tanques),
+         {:ok, _dia} <- verificar_dia(entrega.dia),
+         {:ok, _litros} <- verificar_litros(entrega.litros),
+         {:ok, _grasa} <- verificar_grasa(entrega.grasa) do
+      {:ok, entrega}
+    else
+      {:error, motivo} -> {:error, motivo}
+    end
   end
 
   def clasificar_entregas(entregas, productores, tanques) do
@@ -27,7 +27,6 @@ defmodule Validacion do
     {Enum.reverse(validas), Enum.reverse(rechazadas)}
   end
 
-  # Funciones de verificacion privadas
   defp verificar_productor(codigo, productores) do
     if Enum.any?(productores, fn p -> p.codigo == codigo end) do
       {:ok, codigo}

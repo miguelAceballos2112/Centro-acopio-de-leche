@@ -11,7 +11,7 @@ defmodule Calculos do
 
   def valor_entrega(entrega) do
     ajuste = factor_grasa(entrega.grasa)
-    entrega.litros * @tarifa_base * (1*ajuste)
+    entrega.litros * @tarifa_base * (1 + ajuste)
   end
 
   def factor_grasa(grasa) when grasa >= 3.5, do: 0.06
@@ -24,7 +24,7 @@ defmodule Calculos do
     |> Enum.group_by(& &1.dia)
     |> Enum.reduce(0, fn {_dia, entregas_dia}, acumulado ->
       litros_dia = Enum.sum_by(entregas_dia, & &1.litros)
-      if litros_dia > @litros_min_volumen do
+      if litros_dia >= @litros_min_volumen do
         acumulado + @bonificacion_volumen
       else
         acumulado
@@ -34,12 +34,12 @@ defmodule Calculos do
 
   def descuento_transporte_total(productor, entregas_productor) do
     if productor.transporte do
-      entregas_productor
-      |> Enum.map(& &1.dia)
-      |> Enum.uniq()
-      |> Enum.count()
+      dias_activos = entregas_productor
+        |> Enum.map(& &1.dia)
+        |> Enum.uniq()
+        |> Enum.count()
 
-    dias_activos * @costo_transporte
+      dias_activos * @costo_transporte
     else
       0
     end
