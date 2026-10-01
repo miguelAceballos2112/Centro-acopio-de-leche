@@ -1,3 +1,6 @@
+# Integrantes: Miguel Angel Ceballos Soler (Integrante 1), Victor Manuel Bolaños Guzman (Integrante 2),
+#              Juan José Ramírez Londoño (Integrante 3)
+
 defmodule Calculos do
   @moduledoc """
    Modulo para las reglas de negocio y calculos financieron para la liquidacion de la leche
@@ -11,7 +14,7 @@ defmodule Calculos do
 
   def valor_entrega(entrega) do
     ajuste = factor_grasa(entrega.grasa)
-    entrega.litros * @tarifa_base * (1*ajuste)
+    entrega.litros * @tarifa_base * (1 + ajuste)
   end
 
   def factor_grasa(grasa) when grasa >= 3.5, do: 0.06
@@ -19,27 +22,26 @@ defmodule Calculos do
   def factor_grasa(grasa) when grasa >= 2.5, do: -0.08
   def factor_grasa(_grasa), do: -0.20
 
+  # Bonificación que corresponde a un día según los litros que entregó el productor ese día.
+  def bonificacion_dia(litros_dia) when litros_dia >= @litros_min_volumen, do: @bonificacion_volumen
+  def bonificacion_dia(_litros_dia), do: 0
+
   def bonificacion_volumen_total(entregas_productor) do
     entregas_productor
     |> Enum.group_by(& &1.dia)
     |> Enum.reduce(0, fn {_dia, entregas_dia}, acumulado ->
-      litros_dia = Enum.sum_by(entregas_dia, & &1.litros)
-      if litros_dia > @litros_min_volumen do
-        acumulado + @bonificacion_volumen
-      else
-        acumulado
-      end
+      acumulado + bonificacion_dia(Enum.sum_by(entregas_dia, & &1.litros))
     end)
   end
 
   def descuento_transporte_total(productor, entregas_productor) do
     if productor.transporte do
-      entregas_productor
-      |> Enum.map(& &1.dia)
-      |> Enum.uniq()
-      |> Enum.count()
+      dias_activos = entregas_productor
+        |> Enum.map(& &1.dia)
+        |> Enum.uniq()
+        |> Enum.count()
 
-    dias_activos * @costo_transporte
+      dias_activos * @costo_transporte
     else
       0
     end
